@@ -47,6 +47,8 @@ The Supabase URL, anon key, and API base URL are configured in `frontend/service
 
 ```bash
 cd backend
+python -m venv .venv
+source .venv/bin/activate # or windows equivalent
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
