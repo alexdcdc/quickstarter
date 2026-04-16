@@ -1,22 +1,25 @@
 # AGENTS.md
 
-This file provides guidance to Codex when working with code in this repository.
+This file provides guidance to ChatGPT Codex when working with code in this repository.
 
 ## Project Structure
 
 This is a monorepo with two projects:
+
 - `frontend/` — Expo SDK 54 React Native app
 - `backend/` — Python FastAPI server backed by Supabase
 
 ## Commands
 
 ### Frontend (run from `frontend/`)
+
 - **Start dev server:** `npx expo start` (or `npm start`)
 - **Start for specific platform:** `npm run android`, `npm run ios`, `npm run web`
 - **Lint:** `npm run lint` (uses eslint-config-expo flat config)
 - **Type check:** `npx tsc --noEmit`
 
 ### Backend (run from `backend/`)
+
 - **Start dev server:** `uvicorn app.main:app --reload`
 - **Install deps:** `pip install -r requirements.txt`
 
@@ -66,6 +69,8 @@ FastAPI app with routers under `app/routers/` (auth, users, projects, wallet, fe
 ### Database (Supabase)
 
 Tables: `profiles`, `projects`, `project_videos`, `rewards`, `transactions`, `donations`, `video_interactions`
+
 - Credit balance is computed from the transactions ledger (not stored)
 - Project stats (raised_credits, backer_count) computed from donations table via `project_stats` view
 - `isOwned` is derived at API level (project.creator_id == current_user.id)
+  x

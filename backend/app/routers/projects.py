@@ -100,20 +100,50 @@ async def list_projects(user: OptionalUser):
 async def search_projects(q: str, user: OptionalUser):
     client = user.client if user else get_supabase_client()
     user_id = user.id if user else None
+    query = q.strip()
 
-    # Search by title or creator name using ilike
-    projects_resp = (
+    if not query:
+        return _fetch_projects(client, user_id)
+
+    # PostgREST cannot parse joined fields like profiles.name inside or_().
+    # Search creator names separately, then merge the matching projects.
+    title_resp = (
         client.table("projects")
         .select("*, profiles(name)")
-        .or_(f"title.ilike.%{q}%,profiles.name.ilike.%{q}%")
+        .ilike("title", f"%{query}%")
         .order("created_at", desc=True)
         .execute()
     )
+    profile_resp = client.table("profiles").select("id").ilike("name", f"%{query}%").execute()
+    creator_ids = [profile["id"] for profile in profile_resp.data]
 
-    if not projects_resp.data:
+    creator_resp = None
+    if creator_ids:
+        creator_resp = (
+            client.table("projects")
+            .select("*, profiles(name)")
+            .in_("creator_id", creator_ids)
+            .order("created_at", desc=True)
+            .execute()
+        )
+
+    projects_by_id: dict[str, dict] = {}
+    for project in title_resp.data:
+        projects_by_id[project["id"]] = project
+    if creator_resp:
+        for project in creator_resp.data:
+            projects_by_id[project["id"]] = project
+
+    projects = sorted(
+        projects_by_id.values(),
+        key=lambda project: project.get("created_at", ""),
+        reverse=True,
+    )
+
+    if not projects:
         return []
 
-    project_ids = [p["id"] for p in projects_resp.data]
+    project_ids = [p["id"] for p in projects]
 
     videos_resp = client.table("project_videos").select("*").in_("project_id", project_ids).execute()
     rewards_resp = client.table("rewards").select("*").in_("project_id", project_ids).execute()
@@ -131,9 +161,8 @@ async def search_projects(q: str, user: OptionalUser):
     for s in stats_resp.data:
         stats_by_project[s["project_id"]] = s
 
-    # Filter out projects where profiles join returned null (creator name search miss)
     results = []
-    for p in projects_resp.data:
+    for p in projects:
         if p.get("profiles") is None:
             continue
         results.append(
