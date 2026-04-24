@@ -26,7 +26,21 @@
       "Bash(.venv/Scripts/python scripts/dev_e2e_mux.py)",
       "Bash(cygpath -w /tmp/mux-test.mp4)",
       "Bash(echo \"windows path: $\\(cygpath -w /tmp/mux-test.mp4\\)\")",
-      "Bash(kill 969)"
+      "Bash(kill 969)",
+      "Bash(uvicorn app.main:app --reload --host 127.0.0.1 --port 8000)",
+      "Bash(py --version)",
+      "Bash(python *)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "PowerShell(Stop-Process *)",
+      "Bash(./.venv/Scripts/uvicorn.exe app.main:app --reload --host 127.0.0.1 --port 8000)",
+      "Bash(taskkill //F //T //PID 43064)",
+      "Bash(tasklist //FI \"PID eq 43064\")",
+      "Bash(tasklist //FI \"PID eq 29500\")",
+      "Bash(powershell -Command \"Get-Process -Id 29500 | Select-Object Id,ProcessName,Path\")",
+      "Bash(./.venv/Scripts/python.exe -c ' *)",
+      "Bash(./.venv/Scripts/python.exe *)",
+      "mcp__supabase__list_edge_functions",
+      "mcp__supabase__deploy_edge_function"
     ]
   }
 }

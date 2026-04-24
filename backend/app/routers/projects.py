@@ -260,7 +260,9 @@ async def create_video_upload(project_id: str, req: UploadVideoRequest, user: Cu
 
     upload = await mux_service.create_direct_upload(passthrough=video_row["id"])
 
-    user.client.table("project_videos").update({
+    # Persisting upload_id is a system action — RLS may forbid the authed
+    # user from UPDATE-ing project_videos, so use the service-role client.
+    get_supabase_admin().table("project_videos").update({
         "upload_id": upload["id"],
     }).eq("id", video_row["id"]).execute()
 

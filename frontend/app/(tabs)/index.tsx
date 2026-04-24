@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useApp } from '@/context/app-context';
 import { ThemedText } from '@/components/themed-text';
+import { MockVideoPlayer } from '@/components/mock-video-player';
 import { ProgressBar } from '@/components/progress-bar';
 import { CreditBadge } from '@/components/credit-badge';
 import { IconSymbol } from '@/components/ui/icon-symbol';
@@ -135,12 +136,13 @@ export default function FeedScreen() {
 
     return (
       <View style={[styles.feedItem, { height: containerHeight }]}>
-        {/* Video placeholder */}
-        <View style={[StyleSheet.absoluteFillObject, { backgroundColor: video.placeholderColor }]}>
-          <View style={styles.playIcon}>
-            <IconSymbol name="play.fill" size={48} color="rgba(255,255,255,0.5)" />
-          </View>
-        </View>
+        <MockVideoPlayer
+          color={video.placeholderColor}
+          videoUrl={video.videoUrl}
+          thumbnailUrl={video.thumbnailUrl}
+          status={video.status}
+          fullScreen
+        />
 
         {/* Bottom overlay */}
         <View style={styles.bottomOverlay}>
